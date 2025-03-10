@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Provider } from "react";
 import "./globals.css";
+import TopNav from "@/components/navbar/TopNav";
 
 export const metadata: Metadata = {
   title: "Inner Circle",
@@ -14,6 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <TopNav />
       <body>{children}</body>
     </html>
   );
