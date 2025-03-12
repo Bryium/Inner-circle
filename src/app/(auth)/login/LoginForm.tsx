@@ -7,17 +7,38 @@ import { GiPadlock } from "react-icons/gi";
 import { useForm } from "react-hook-form";
 import { loginSchema, LoginSchema } from "@/lib/schemas/LoginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signInUser } from "@/app/actions/authActions";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
-    formState: { isValid, errors },
+    formState: { errors, isValid },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     mode: "onTouched",
   });
-  const onSubmit = (data: LoginSchema) => console.log(data);
+
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      const result = await signInUser(data);
+      console.log("Login result: ", result);
+
+      if (result.status === "success") {
+        router.push("/members");
+        router.refresh();
+      } else {
+        toast.error(result.error as string);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <Card className="w-3/5 mx-auto">
@@ -34,21 +55,19 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <Input
-              defaultValue=""
               label="Email"
               variant="bordered"
               {...register("email")}
               isInvalid={!!errors.email}
-              errorMessage={errors.email?.message as string}
+              errorMessage={errors.email?.message}
             />
             <Input
-              defaultValue=""
               label="Password"
               variant="bordered"
               type="password"
               {...register("password")}
               isInvalid={!!errors.password}
-              errorMessage={errors.password?.message as string}
+              errorMessage={errors.password?.message}
             />
             <Button
               fullWidth
