@@ -38,15 +38,16 @@ export default function UserMenu({ user }: Props) {
             as="span"
             className="h-14 flex items-center"
             aria-label="username"
+            key={""}
           >
             Signed in as{" "}
             <span className="ml-1 font-semibold">{user?.name}</span>
           </DropdownItem>
         </DropdownSection>
-        <DropdownItem as={Link} href="/members/edit">
+        <DropdownItem as={Link} href="/members/edit" key={""}>
           Edit Profile
         </DropdownItem>
-        <DropdownItem color="danger" onClick={signOutUser}>
+        <DropdownItem color="danger" onClick={signOutUser} key={""}>
           Log Out
         </DropdownItem>
       </DropdownMenu>

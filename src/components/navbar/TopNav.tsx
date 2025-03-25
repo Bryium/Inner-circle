@@ -1,5 +1,3 @@
-"use client";
-
 import { Navbar, NavbarBrand, NavbarContent } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import Link from "next/link";
@@ -9,8 +7,10 @@ import NavLink from "./NavLink";
 import { auth } from "@/auth";
 import UserMenu from "./UserMenu";
 
-export default function TopNav() {
+export default async function TopNav() {
+  // Fetch the session asynchronously
   const session = await auth();
+
   return (
     <Navbar
       maxWidth="full"
