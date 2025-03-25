@@ -26,7 +26,7 @@ export async function signInUser(
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { status: "error", error: "Invalid credentials" };
+          return { status: "error", error: "Invalid Credentials" };
         default:
           return { status: "error", error: "Something went wrong" };
       }
@@ -58,7 +58,7 @@ export async function registerUser(
       where: { email },
     });
 
-    if (existingUser) return { status: "error", error: "User already exists" };
+    if (existingUser) return { status: "error", error: "User Already Exists" };
 
     const user = await prisma.user.create({
       data: {
@@ -71,7 +71,7 @@ export async function registerUser(
     return { status: "success", data: user };
   } catch (error) {
     console.log(error);
-    return { status: "error", error: "Something went wrong" };
+    return { status: "error", error: "something went wrong" };
   }
 }
 
