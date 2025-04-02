@@ -1,36 +1,37 @@
 import { NextResponse } from "next/server";
-import { auth } from "./auth";
+import { getToken } from "next-auth/jwt";
 import { authRoutes, publicRoutes } from "./routes";
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function middleware(req: {
+  nextUrl: any;
+  headers: Headers;
+}) {
+  const token = await getToken({
+    req: { headers: req.headers },
+    secret: process.env.AUTH_SECRET,
+  });
 
+  const { nextUrl } = req;
+  const isLoggedIn = !!token;
   const isPublic = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  if (isPublic) {
-    return NextResponse.next();
-  }
+  if (isPublic) return NextResponse.next();
 
   if (isAuthRoute) {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/members", nextUrl));
-    }
-    return NextResponse.next();
+    return isLoggedIn
+      ? NextResponse.redirect(new URL("/members", nextUrl))
+      : NextResponse.next();
   }
 
-  if (!isPublic && !isLoggedIn) {
+  if (!isLoggedIn) {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
   return NextResponse.next();
-});
+}
 
-/**
- * This is a regular expression that will match any URL path
- * that does not start with /api, /_next/static, /_next/image, or favicon.ico.
- */
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
